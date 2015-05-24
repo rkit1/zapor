@@ -5,12 +5,12 @@
 #include <stdint.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/XTest.h>
-#include <bmpfile.h>
 #include <X11/xpm.h>
 #include <string.h>
 #include "Arrows.h"
 #include <time.h>
 
+/*
 void dump_img(XImage* img) {
     bmpfile_t* bmp = bmp_create(img->width, img->height, img->depth);
     rgb_pixel_t px = {0, 0, 0, 0};
@@ -26,6 +26,7 @@ void dump_img(XImage* img) {
     bmp_save(bmp, "/home/victor/dump.bmp");
     bmp_destroy(bmp);
 }
+*/
 
 void dump_xpm(Display* dis, XImage* img) {
     printf("%d", XpmWriteFileFromImage(dis, "/home/victor/dump.xpm", img, NULL, NULL));
@@ -135,7 +136,7 @@ void click(Display* dis, int button, int x, int y) {
     usleep(30000);
 }
 
-bool check_for_image(XImage* haystack, int x, int y, XImage* needle) {
+Bool check_for_image(XImage* haystack, int x, int y, XImage* needle) {
     for (int ty = 0; ty < needle->height; ty++) {
         for (int tx = 0; tx < needle->width; tx++) {
             unsigned long tpx = XGetPixel(needle, tx, ty);
@@ -153,7 +154,7 @@ int image_loop(Display* dis) {
     XImage* img;
     XImage* imgcur;
     XImage* tri;
-    bool exit_error = False;
+    Bool exit_error = False;
     XpmCreateImageFromData(dis, arrow_small, &tri, NULL, NULL);
     img = capture_screen(dis);
     
@@ -182,12 +183,17 @@ int image_loop(Display* dis) {
 
 int main(int argc, char** argv) {
     Display* dis = XOpenDisplay(0);
-    unsigned long f9 = XKeysymToKeycode(dis, XK_F9);
-    setup_listen_key(dis, f9, ControlMask);
+    image_loop(dis);
+    return (EXIT_SUCCESS);
+    unsigned long f9 = XKeysymToKeycode(dis, XK_9);
+    printf("%d\n", f9);
+    setup_listen_key(dis, f9, 0);
     XEvent ev;
     while(True) {
         XNextEvent(dis, &ev);
+	printf("xevent\n");
         if (ev.type == KeyPress) {
+	    printf("kp\n");
             if (ev.xkey.keycode == f9) {
                 if (image_loop(dis) == -1) 
                     printf("exited with error\n");

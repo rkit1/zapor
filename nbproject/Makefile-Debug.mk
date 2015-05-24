@@ -52,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/usr/local/lib -lX11 -lbmp `pkg-config --libs xpm` `pkg-config --libs xtst`  
+LDLIBSOPTIONS=-L/usr/local/lib -lX11 `pkg-config --libs xpm` `pkg-config --libs xtst`  
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
