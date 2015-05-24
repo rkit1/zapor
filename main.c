@@ -29,7 +29,7 @@ void dump_img(XImage* img) {
 */
 
 void dump_xpm(Display* dis, XImage* img) {
-    printf("%d", XpmWriteFileFromImage(dis, "/home/victor/dump.xpm", img, NULL, NULL));
+    printf("%d", XpmWriteFileFromImage(dis, "/home/tori/dump.xpm", img, NULL, NULL));
 }
 
 XImage* capture_screen(Display* dis) {
@@ -154,21 +154,25 @@ int image_loop(Display* dis) {
     XImage* img;
     XImage* imgcur;
     XImage* tri;
+    XImage* trib;
     Bool exit_error = False;
     XpmCreateImageFromData(dis, arrow_small, &tri, NULL, NULL);
+    XpmCreateImageFromData(dis, arrow_big, &trib, NULL, NULL);
     img = capture_screen(dis);
     
-    for (int iy = 0; iy < img->height - tri->height && !exit_error; iy++) {
-        for (int ix = 0; ix < img->width - tri->width && !exit_error; ix++) {
+    for (int iy = 0; iy < img->height - tri->height ; iy++) {
+        for (int ix = 0; ix < img->width - tri->width ; ix++) {
             
             if (check_for_image(img, ix, iy, tri)) {
-                imgcur = capture_screen_region(dis, ix, iy, ix + tri->width, iy + tri->height);
-                if(!check_for_image(imgcur, 0, 0, tri)) {
-                    exit_error = True;
-                } else {
-                    printf("%d %d\n", ix, iy);
+                imgcur = capture_screen_region(dis, ix, iy, ix + trib->width, iy + trib->height);
+		if (check_for_image(imgcur, 0, 0, tri)) {
+                    printf("s %d %d\n", ix, iy);
                     click(dis, 1, ix + 5, iy + 5);
-                }
+		} else if(check_for_image(imgcur, 0, 0, trib)) {
+                    printf("b %d %d\n", ix, iy);
+                    click(dis, 1, ix + 5, iy + 5);
+		} else
+                    exit_error = True;
                 XFree(imgcur);
             }
             
@@ -177,6 +181,7 @@ int image_loop(Display* dis) {
     
     XFree(img);
     XFree(tri);
+    XFree(trib);
     if (exit_error) return -1;
     return 0;
 }
