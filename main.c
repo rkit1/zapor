@@ -29,7 +29,7 @@ void dump_img(XImage* img) {
 */
 
 void dump_xpm(Display* dis, XImage* img) {
-    printf("%d", XpmWriteFileFromImage(dis, "/home/tori/dump.xpm", img, NULL, NULL));
+    printf("%d", XpmWriteFileFromImage(dis, "/home/victor/dump.xpm", img, NULL, NULL));
 }
 
 XImage* capture_screen(Display* dis) {
@@ -121,7 +121,7 @@ void capture_key_region(Display* dis) {
             }
         }
     }
-    dump_xpm(dis, capture_screen_region(dis, x, y, x1, y1));    
+    dump_xpm(dis, capture_screen_region(dis, x, y, x1, y1));
 }
 
 void click(Display* dis, int button, int x, int y) {
@@ -136,44 +136,52 @@ void click(Display* dis, int button, int x, int y) {
     usleep(30000);
 }
 
+typedef struct pixel {
+    unsigned long red;
+    unsigned long green;
+    unsigned long blue;
+} pixel;
+
+pixel getColors(XImage* img, int x, int y) {
+    unsigned long px = XGetPixel(img, x, y);
+    pixel pxout;
+    pxout.red = (px & img->red_mask) >> (img->depth / 3 * 2);
+    pxout.green = (px & img->green_mask) >> (img->depth / 3);
+    pxout.blue = px & img->blue_mask;
+    return pxout;
+}
+
 Bool check_for_image(XImage* haystack, int x, int y, XImage* needle) {
     for (int ty = 0; ty < needle->height; ty++) {
         for (int tx = 0; tx < needle->width; tx++) {
             unsigned long tpx = XGetPixel(needle, tx, ty);
             if (tpx > 0) {
-                if (tpx != XGetPixel(haystack, tx + x, ty + y)) {
+                if (tpx != XGetPixel(haystack, tx + x, ty + y))
                     return False;
-                }
             }
         }
     }
     return True;
 }
 
-int image_loop(Display* dis) {
+void image_loop(Display* dis) {
     XImage* img;
     XImage* imgcur;
     XImage* tri;
     XImage* trib;
-    Bool exit_error = False;
-    XpmCreateImageFromData(dis, arrow_small, &tri, NULL, NULL);
-    XpmCreateImageFromData(dis, arrow_big, &trib, NULL, NULL);
+    XpmCreateImageFromData(dis, arrow_small, &trib, NULL, NULL);
+    XpmCreateImageFromData(dis, arrow_big, &tri, NULL, NULL);
     img = capture_screen(dis);
     
     for (int iy = 0; iy < img->height - tri->height ; iy++) {
         for (int ix = 0; ix < img->width - tri->width ; ix++) {
             
             if (check_for_image(img, ix, iy, tri)) {
-                imgcur = capture_screen_region(dis, ix, iy, ix + trib->width, iy + trib->height);
-		if (check_for_image(imgcur, 0, 0, tri)) {
-                    printf("s %d %d\n", ix, iy);
-                    click(dis, 1, ix + 5, iy + 5);
-		} else if(check_for_image(imgcur, 0, 0, trib)) {
-                    printf("b %d %d\n", ix, iy);
-                    click(dis, 1, ix + 5, iy + 5);
-		} else
-                    exit_error = True;
-                XFree(imgcur);
+                printf("s %d %d\n", ix, iy);
+                click(dis, 1, ix + 5, iy + 5);
+            } else if (check_for_image(img, ix, iy, trib)) {
+                printf("b %d %d\n", ix, iy);
+                click(dis, 1, ix + 5, iy + 5);
             }
             
         }
@@ -182,26 +190,18 @@ int image_loop(Display* dis) {
     XFree(img);
     XFree(tri);
     XFree(trib);
-    if (exit_error) return -1;
-    return 0;
 }
 
 int main(int argc, char** argv) {
     Display* dis = XOpenDisplay(0);
-    image_loop(dis);
-    return (EXIT_SUCCESS);
-    unsigned long f9 = XKeysymToKeycode(dis, XK_9);
-    printf("%d\n", f9);
-    setup_listen_key(dis, f9, 0);
+    unsigned long f9 = XKeysymToKeycode(dis, XK_F9);
+    setup_listen_key(dis, f9, ControlMask);
     XEvent ev;
     while(True) {
         XNextEvent(dis, &ev);
-	printf("xevent\n");
         if (ev.type == KeyPress) {
-	    printf("kp\n");
             if (ev.xkey.keycode == f9) {
-                if (image_loop(dis) == -1) 
-                    printf("exited with error\n");
+                image_loop(dis);
             }
         }
     }
