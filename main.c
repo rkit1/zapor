@@ -192,8 +192,7 @@ void image_loop(Display* dis) {
     XFree(trib);
 }
 
-int main(int argc, char** argv) {
-    Display* dis = XOpenDisplay(0);
+void key_loop(Display* dis) {
     unsigned long f9 = XKeysymToKeycode(dis, XK_F9);
     setup_listen_key(dis, f9, ControlMask);
     XEvent ev;
@@ -205,6 +204,11 @@ int main(int argc, char** argv) {
             }
         }
     }
+}
+
+int main(int argc, char** argv) {
+    Display* dis = XOpenDisplay(0);
+    image_loop(dis);
     XFree(dis);
     return (EXIT_SUCCESS);
 }
