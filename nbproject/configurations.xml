@@ -26,6 +26,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>/home/victor/NetBeansProjects/CppApplication_1/Run.sh</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -56,6 +57,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="/home/victor/NetBeansProjects/CppApplication_1/Run.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
@@ -80,6 +86,11 @@
         </asmTool>
       </compileType>
       <item path="/home/victor/NetBeansProjects/CppApplication_1/Arrows.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/victor/NetBeansProjects/CppApplication_1/Run.sh"
             ex="false"
             tool="3"
             flavor2="0">
