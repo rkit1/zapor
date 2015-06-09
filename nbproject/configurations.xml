@@ -26,6 +26,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>/home/victor/NetBeansProjects/CppApplication_1/.gitignore</itemPath>
     <itemPath>/home/victor/NetBeansProjects/CppApplication_1/Run.sh</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -41,17 +42,19 @@
           <standard>3</standard>
         </cTool>
         <linkerTool>
-          <linkerAddLib>
-            <pElem>/usr/local/lib</pElem>
-          </linkerAddLib>
+          <output>bin/zapor_clicker</output>
           <linkerLibItems>
             <linkerLibLibItem>X11</linkerLibLibItem>
-            <linkerLibLibItem>bmp</linkerLibLibItem>
             <linkerOptionItem>`pkg-config --libs xpm`</linkerOptionItem>
             <linkerOptionItem>`pkg-config --libs xtst`</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="/home/victor/NetBeansProjects/CppApplication_1/.gitignore"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="/home/victor/NetBeansProjects/CppApplication_1/Arrows.h"
             ex="false"
             tool="3"
@@ -73,7 +76,9 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <developmentMode>5</developmentMode>
+          <developmentMode>6</developmentMode>
+          <stripSymbols>true</stripSymbols>
+          <standard>3</standard>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
@@ -84,7 +89,19 @@
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
+        <linkerTool>
+          <output>bin/zapor_clicker</output>
+          <stripSymbols>true</stripSymbols>
+          <linkerLibItems>
+            <linkerOptionItem>`pkg-config --libs x11 xpm xtst`</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
+      <item path="/home/victor/NetBeansProjects/CppApplication_1/.gitignore"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="/home/victor/NetBeansProjects/CppApplication_1/Arrows.h"
             ex="false"
             tool="3"
