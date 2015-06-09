@@ -151,12 +151,24 @@ pixel getColors(XImage* img, int x, int y) {
     return pxout;
 }
 
-Bool check_for_image(XImage* haystack, int x, int y, XImage* needle) {
+int percent_to_pixel_threshold(XImage* img, int percents) {
+    int signifigant_count = 0;
+    for (int y = 0; y < img->height; y++) {
+        for (int x = 0; x < img->width; x++) {
+            if (XGetPixel(img, x, y) > 0) signifigant_count++;
+        }
+    }
+    return (signifigant_count * percents) / 100;
+}
+
+Bool check_for_image(XImage* haystack, int x, int y, XImage* needle, int treshold) {
+    int fail_count = 0;
     for (int ty = 0; ty < needle->height; ty++) {
         for (int tx = 0; tx < needle->width; tx++) {
             unsigned long tpx = XGetPixel(needle, tx, ty);
-            if (tpx > 0) {
-                if (tpx != XGetPixel(haystack, tx + x, ty + y))
+            if (tpx > 0 && tpx != XGetPixel(haystack, tx + x, ty + y)) {
+                fail_count++;
+                if (fail_count >= treshold)
                     return False;
             }
         }
@@ -166,20 +178,21 @@ Bool check_for_image(XImage* haystack, int x, int y, XImage* needle) {
 
 void image_loop(Display* dis) {
     XImage* img;
-    XImage* imgcur;
     XImage* tri;
     XImage* trib;
     XpmCreateImageFromData(dis, arrow_small, &trib, NULL, NULL);
     XpmCreateImageFromData(dis, arrow_big, &tri, NULL, NULL);
+    int tri_tresh = percent_to_pixel_threshold(tri, 10);
+    int trib_tresh = percent_to_pixel_threshold(trib, 10);
     img = capture_screen(dis);
     
     for (int iy = 0; iy < img->height - tri->height ; iy++) {
         for (int ix = 0; ix < img->width - tri->width ; ix++) {
             
-            if (check_for_image(img, ix, iy, tri)) {
+            if (check_for_image(img, ix, iy, tri, tri_tresh)) {
                 printf("s %d %d\n", ix, iy);
                 click(dis, 1, ix + 5, iy + 5);
-            } else if (check_for_image(img, ix, iy, trib)) {
+            } else if (check_for_image(img, ix, iy, trib, trib_tresh)) {
                 printf("b %d %d\n", ix, iy);
                 click(dis, 1, ix + 5, iy + 5);
             }
