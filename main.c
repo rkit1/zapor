@@ -126,14 +126,9 @@ void capture_key_region(Display* dis) {
 
 void click(Display* dis, int button, int x, int y) {
     XTestFakeMotionEvent(dis, -1, x, y, 0);
-    XSync(dis,0);
-    usleep(30000);
     XTestFakeButtonEvent(dis, button, True, 0);
-    XSync(dis,0);
-    usleep(30000);
     XTestFakeButtonEvent(dis, button, False, 0);
     XSync(dis,0);
-    usleep(30000);
 }
 
 typedef struct pixel {
